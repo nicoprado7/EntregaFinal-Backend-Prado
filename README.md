@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-# Segunda entrega - Curso de Backend
+# Entrega final - Curso de Backend
 Este proyecto es un sistema básico de E-Commerce desarrollado con Node.js y Socket.IO, diseñado para gestionar productos en tiempo real mediante una interfaz web.
 # Autor: Nicolás Prado
 
