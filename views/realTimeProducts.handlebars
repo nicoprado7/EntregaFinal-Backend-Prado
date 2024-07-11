@@ -1,0 +1,112 @@
+<!-- views/realTimeProducts.handlebars -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Productos (tiempo real)</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <h1>FORMULARIO PARA AGREGAR PRODUCTOS</h1>
+
+    <!-- Formulario para agregar productos -->
+    <form id="add-product-form" enctype="multipart/form-data">
+        <input type="text" name="title" placeholder="Título" required>
+        <input type="text" name="description" placeholder="Descripción" required>
+        <input type="number" name="price" placeholder="Precio" required>
+        <input type="text" name="code" placeholder="Código" required>
+        <input type="number" name="stock" placeholder="Stock" required>
+        <input type="text" name="category" placeholder="Categoría" required>
+        <input type="file" name="image" required>
+        <button type="submit">Agregar Producto</button>
+    </form>
+
+    <!-- Lista de productos -->
+    <ul id="products-list">
+        {{#each products}}
+            <li>
+                <img src="{{this.image}}" alt="{{this.title}}" width="100"><br>
+                <strong>{{this.title}}</strong> <br>
+                Descripción: {{this.description}} <br>
+                Precio: ${{this.price}} <br>
+                Código: {{this.code}} <br>
+                Stock: {{this.stock}} <br>
+                Categoría: {{this.category}} <br>
+                <button onclick="eliminarProducto('{{this._id}}')">Eliminar</button>
+            </li>
+        {{/each}}
+    </ul>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        // Función para eliminar un producto
+        function eliminarProducto(productId) {
+            fetch(`/product/delete/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    socket.emit('deleteProduct', productId);
+                    console.log('Producto eliminado');
+                } else {
+                    console.error('Error al eliminar el producto');
+                }
+            })
+            .catch(error => {
+                console.error('Error al eliminar el producto:', error);
+            });
+        }
+
+        // Actualizar la lista de productos en tiempo real
+        socket.on('updateProducts', (products) => {
+            const productsList = document.getElementById('products-list');
+            productsList.innerHTML = ''; // Limpiar la lista antes de agregar productos
+
+            products.forEach(product => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <img src="${product.image}" alt="${product.title}" width="100"><br>
+                    <strong>${product.title}</strong> <br>
+                    Descripción: ${product.description} <br>
+                    Precio: $${product.price} <br>
+                    Código: ${product.code} <br>
+                    Stock: ${product.stock} <br>
+                    Categoría: ${product.category} <br>
+                    <button onclick="eliminarProducto('${product._id}')">Eliminar</button>
+                `;
+                productsList.appendChild(li);
+            });
+        });
+
+        // Manejar el envío del formulario para agregar un nuevo producto
+        document.getElementById('add-product-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            try {
+                const response = await fetch('/api/products', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    console.log('Producto agregado correctamente');
+                    socket.emit('updateProducts'); // Emitir evento para actualizar la lista
+                    event.target.reset(); // Limpiar el formulario después de enviar
+                } else {
+                    console.error('Error al agregar el producto');
+                }
+            } catch (error) {
+                console.error('Error al agregar el producto:', error);
+            }
+        });
+    </script>
+</body>
+</html>
+

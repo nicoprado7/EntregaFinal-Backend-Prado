@@ -1,0 +1,341 @@
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #000000;
+    text-align: center;
+}
+
+header{
+    position: sticky;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+.navbar {
+    background-color: #343a40; /* Color de fondo del navbar */
+    padding: 1px;
+}
+
+.navbar-brand, .navbar-text {
+    color: #b40000; /* Color del texto del navbar */
+}
+.navbar-nav .nav-item .nav-link {
+    padding: 1px; /* Reduce el padding de los enlaces */
+    line-height: 0; /* Ajusta la altura de línea si es necesario */
+}
+
+
+h1 {
+    margin: 0;
+}
+
+main {
+    padding: 20px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    width: calc(100% - 40px);
+    margin: auto;
+    margin-bottom: 70px;
+    margin-top: 10px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+li {
+    background: #2b2b2b;
+    color: white;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    flex: 0 0 calc(33.333% - 20px);
+    max-width: calc(33.333% - 20px);
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    li {
+        flex: 0 0 calc(50% - 20px);
+        max-width: calc(50% - 20px);
+    }
+}
+
+@media (max-width: 480px) {
+    li {
+        flex: 0 0 calc(100% - 20px);
+        max-width: calc(100% - 20px);
+    }
+}
+
+button {
+    background-color: #ff4b4b;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+button:hover {
+    background-color: #ff0000;
+}
+
+form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    margin: auto;
+}
+
+input, button {
+    display: block;
+    width: calc(100% - 20px);
+    margin: 5px auto;
+    padding: 10px;
+    font-size: 16px;
+}
+
+button[type="submit"] {
+    background-color: #00ac25;
+}
+
+button[type="submit"]:hover {
+    background-color: #197c00;
+}
+
+
+/* --------------------------------- fOOTER --------------------------------- */
+
+.footer {
+    background-color: #343a40; /* Color de fondo del footer */
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height:60px;
+        }
+
+  .footer-row {
+    display: flex;
+  }
+
+  .footer-links {
+    width: 200%;
+    padding: 0 15px;
+    margin-bottom: 5px;
+  }
+  .footer-links ul li a {
+    font-size: 18px;
+    color: black;
+    display: block;
+    margin-bottom: 15px;
+  }
+
+  .social-link {
+    margin-top: 10px;
+        }
+
+  .social-link a {
+    display: inline-block;
+    min-height: 1px;
+    width: 50px;
+    background-color: #db00008f;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 60%;
+    border-style: solid;
+    color: white;
+    margin: 0 10px;
+    margin-right: 10px;
+    font-size: 24px;
+  }
+  .social-link a:hover {
+    background-color: rgb(190, 0, 0);
+    transform: scale(1.2);
+    transition: all 0.5s;
+    color: black;
+  }
+
+
+
+
+  /* public/css/styles.css (o tu archivo CSS) */
+.pagination {
+    margin-top: 20px;
+}
+.pagination a {
+    margin-right: 10px;
+}
+
+.add-to-cart-button {
+    background-color: #4CAF50; /* Color de fondo del botón */
+    color: white; /* Color del texto */
+    border: none; /* Sin bordes */
+    padding: 10px 20px; /* Espaciado interno */
+    text-align: center; /* Alineación del texto */
+    text-decoration: none; /* Sin subrayado */
+    display: inline-block; /* Mostrar en línea */
+    font-size: 16px; /* Tamaño de la fuente */
+    margin: 4px 2px; /* Margen alrededor del botón */
+    cursor: pointer; /* Cambiar el cursor al pasar sobre el botón */
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+.add-to-cart-button:hover {
+    background-color: #45a049; /* Color de fondo al pasar el cursor */
+}
+
+
+
+/* Estilos personalizados para productos */
+#products-list {
+    list-style-type: none;
+    padding: 0;
+}
+#products-list li {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+#products-list li img {
+    margin-bottom: 5px;
+}
+.product-title {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+.product-description {
+    color: #666;
+}
+.product-price {
+    font-size: 1.1em;
+    color: green;
+}
+.product-stock {
+    font-weight: bold;
+}
+.product-category {
+    font-style: italic;
+}
+.product-image {
+    max-width: 100px;
+    max-height: 100px;
+}
+.product-buttons {
+    margin-top: 5px;
+}
+.pagination-controls {
+    margin-top: 20px;
+}
+
+
+
+.green-button {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Transición suave */
+}
+
+.green-button:hover {
+    background-color: rgb(0, 94, 0); /* Verde más claro al hacer hover */
+}
+
+
+.button-orden {
+    background-color: rgb(48, 48, 48);
+    color: white;
+    padding: 5px 8px;  /* Ajusta el padding vertical y horizontal */
+    border: none;
+    cursor: pointer;
+    display: inline-block; /* Alinea los elementos en línea y ajusta al contenido */
+    text-align: center; /* Alinea el texto al centro */
+    line-height: 1; /* Ajusta la altura de línea para el texto */
+    transition: background-color 0.3s; /* Transición suave para el hover */
+    max-width: 200px; /* Establece un ancho máximo para el botón */
+    width: auto; /* Permite que el ancho del botón se ajuste automáticamente al contenido */
+    margin: 0 auto; /* Centra el botón horizontalmente dentro del contenedor */
+}
+
+.button-orden:hover {
+    background-color: rgb(70, 209, 255); /* Cambia a un azul más claro al hacer hover */
+}
+
+.button-siguiente-atras{
+    background-color: rgb(235, 231, 0);
+    color: rgb(0, 0, 0);
+    padding: 20px 8px;  /* Ajusta el padding vertical y horizontal */
+    border: none;
+    cursor: pointer;
+    display: inline-block; /* Alinea los elementos en línea y ajusta al contenido */
+    text-align: center; /* Alinea el texto al centro */
+    line-height: 1; /* Ajusta la altura de línea para el texto */
+    transition: background-color 0.3s; /* Transición suave para el hover */
+    max-width: 200px; /* Establece un ancho máximo para el botón */
+    width: auto; /* Permite que el ancho del botón se ajuste automáticamente al contenido */
+    margin: 0 auto; /* Centra el botón horizontalmente dentro del contenedor */
+}
+
+.button-siguiente-atras:hover{
+    background-color: rgb(160, 123, 0);
+}
+
+.increment-button {
+    background-color: rgb(97, 97, 97);
+    color: white;
+    padding: 5px 10px; /* Ajusta el padding vertical y horizontal */
+    font-size: 14px;   /* Ajusta el tamaño del texto */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Transición suave para el hover */
+    width: auto; /
+}
+
+.increment-button:hover {
+    background-color: lightblue; /* Cambia a un azul más claro al hacer hover */
+}
+
+.quantity-control {
+    display: flex; /* Utiliza flexbox para alinear los elementos horizontalmente */
+    align-items: center; /* Centra verticalmente los elementos */
+    justify-content: center; /* Centra horizontalmente los elementos */
+    width: fit-content; /* Ajusta el ancho al contenido */
+    margin: 0 auto; /* Centra el control de cantidad horizontalmente */
+}
+
+.quantity-control .decrement-button,
+.quantity-control .increment-button {
+    background-color: rgb(124, 124, 124);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    
+}
+
+.quantity-control .space{
+    padding: 0 10px; /* Espaciado entre los botones y el número */
+    font-size: 14px; /* Tamaño del texto del número */
+}
+
+.quantity-control .decrement-button:hover,
+.quantity-control .increment-button:hover {
+    background-color: lightblue; /* Color de fondo más claro al hacer hover */
+}

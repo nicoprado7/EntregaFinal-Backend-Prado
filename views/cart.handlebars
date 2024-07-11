@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <h1>Carrito de Compras</h1>
+    <ul id="cart-list">
+        {{#each products}}
+            <li>
+                <strong>{{this.title}}</strong><br>
+                <img src="{{this.image}}" alt="{{this.title}}" width="100"><br>
+                {{this.description}}<br>
+                Precio: ${{this.price}}<br>
+                Cantidad: {{this.quantity}}<br>
+                <button onclick="eliminarDelCarrito('{{this._id}}')">Eliminar</button> <!-- Cambiado a _id -->
+            </li>
+        {{/each}}
+    </ul>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        // Función para eliminar un producto del carrito
+        function eliminarDelCarrito(productId) {
+            fetch(`/cart/delete/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Producto eliminado del carrito');
+                    socket.emit('updateCart'); // Emitir evento para actualizar el carrito
+                } else {
+                    console.error('Error al eliminar el producto del carrito');
+                }
+            })
+            .catch(error => {
+                console.error('Error al eliminar el producto del carrito:', error);
+            });
+        }
+
+        // Actualizar la lista de productos en tiempo real
+        socket.on('updateCart', (products) => {
+            const cartList = document.getElementById('cart-list');
+            cartList.innerHTML = '';
+            products.forEach(product => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>${product.title}</strong><br>
+                    <img src="${product.image}" alt="${product.title}" width="100"><br>
+                    ${product.description}<br>
+                    Precio: $${product.price}<br>
+                    Cantidad: ${product.quantity}<br>
+                    <button onclick="eliminarDelCarrito('${product._id}')">Eliminar</button>
+                `;
+                cartList.appendChild(li);
+            });
+        });
+    </script>
+</body>
+</html>

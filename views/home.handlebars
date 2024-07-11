@@ -1,0 +1,181 @@
+<!-- views/home.handlebars -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Productos</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <h1>E-COMMERCE</h1>
+    <h2>Lista de productos</h2>
+    <ul id="products-list">
+        {{#each products}}
+            <li id="product-{{this._id}}">
+                <div class="product-title">{{this.title}}</div>
+                <img src="{{this.image}}" alt="{{this.title}}" class="product-image">
+                <div class="product-description">{{this.description}}</div>
+                <div class="product-price">Precio: ${{this.price}}</div>
+                <div>Código: {{this.code}}</div>
+                <div class="product-stock">Stock: <span id="stock-{{this._id}}">{{this.stock}}</span></div>
+                <div class="product-category">Categoría: {{this.category}}</div>
+                {{#if this.imagePath}}
+                    <img src="{{this.imagePath}}" alt="{{this.title}}" class="product-image">
+                {{/if}}
+                <div class="product-buttons">
+                    <!-- Botones de incremento y decremento -->
+   {{!--                  <button class="increment-button" onclick="incrementarCantidad('{{this._id}}')">+</button>
+                    <span id="quantity-{{this._id}}">1</span>
+                    <button class="increment-button" onclick="decrementarCantidad('{{this._id}}')">-</button><br> --}}
+
+                    <div class="quantity-control">
+                        <button class="decrement-button" onclick="decrementarCantidad('{{this._id}}')">-</button>
+                        <span class="space" id="quantity-{{this._id}}">1</span>
+                        <button class="increment-button" onclick="incrementarCantidad('{{this._id}}')">+</button>
+                    </div>
+
+
+
+                    <!-- Botón de agregar al carrito -->
+                    <button class="green-button" onclick="agregarAlCarrito('{{this._id}}', '{{this.title}}', '{{this.price}}')">Agregar al carrito</button>
+
+                    <button onclick="eliminarProducto('{{this._id}}')">Eliminar</button>
+                </div>
+            </li>
+        {{/each}}
+    </ul>
+
+    <!-- Paginación y Controles -->
+    <div class="pagination-controls">
+        {{#if data.hasPrevPage}}
+            <a href="/api/products?page={{data.prevPage}}&limit={{data.limit}}&sort={{data.sort}}&query={{data.query}}">
+                <button class="button-siguiente-atras">◀️ ANTERIOR</button>
+            </a>
+        {{/if}}
+
+
+        <!-- Botones de Orden -->
+        <a href="/api/products?page={{data.page}}&limit={{data.limit}}&sort=asc&query={{data.query}}">
+            <button class="button-orden">ORDENAR DE MENOR A MAYOR PRECIO ⬇</button>
+        </a>
+        <a href="/api/products?page={{data.page}}&limit={{data.limit}}&sort=desc&query={{data.query}}">
+            <button class="button-orden">ORDENAR DE MAYOR A MENOR PRECIO ⬆</button>
+        </a>
+        <a href="/api/products?page={{data.page}}&limit={{data.limit}}&sort=&query={{data.query}}">
+            <button class="button-orden">ORDEN PREDETERMINADO ⬌</button>
+        </a>
+
+        {{#if data.hasNextPage}}
+            <a href="/api/products?page={{data.nextPage}}&limit={{data.limit}}&sort={{data.sort}}&query={{data.query}}">
+                <button class="button-siguiente-atras">SIGUIENTE ▶️</button>
+            </a>
+        {{/if}}
+
+        <p>
+            Página
+            <span id="page">{{data.page}}</span>
+            de
+            <span id="total-pages">{{data.totalPages}}</span>
+            <br />
+            <span>{{data.totalDocs}}</span>
+            Documentos
+        </p>
+    </div>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        // Función para incrementar la cantidad
+        function incrementarCantidad(productId) {
+            const quantityElement = document.getElementById(`quantity-${productId}`);
+            const stockElement = document.getElementById(`stock-${productId}`);
+            const stock = parseInt(stockElement.textContent);
+
+            let currentQuantity = parseInt(quantityElement.textContent);
+
+            if (currentQuantity < stock) {
+                currentQuantity++;
+                quantityElement.textContent = currentQuantity;
+            } else {
+                alert('No puedes agregar más de lo disponible en stock');
+            }
+        }
+
+        // Función para decrementar la cantidad
+        function decrementarCantidad(productId) {
+            const quantityElement = document.getElementById(`quantity-${productId}`);
+            let currentQuantity = parseInt(quantityElement.textContent);
+
+            if (currentQuantity > 1) {
+                currentQuantity--;
+                quantityElement.textContent = currentQuantity;
+            }
+        }
+
+        // Función para agregar un producto al carrito
+        function agregarAlCarrito(productId, title, price) {
+            const quantityElement = document.getElementById(`quantity-${productId}`);
+            const quantity = parseInt(quantityElement.textContent);
+
+            fetch(`/cart/add/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ quantity })
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Producto agregado al carrito');
+                    socket.emit('updateCart');
+                    quantityElement.textContent = '1'; // Reiniciar la cantidad a 1 después de agregar al carrito
+                } else {
+                    response.json().then(data => {
+                        alert(data.message);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error al agregar el producto al carrito:', error);
+            });
+        }
+
+        // Función para eliminar un producto
+        function eliminarProducto(productId) {
+            fetch(`/api/products/${productId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    socket.emit('deleteProduct', productId);
+                    document.getElementById(`product-${productId}`).remove();
+                    console.log('Producto eliminado');
+                } else {
+                    response.json().then(data => {
+                        alert(data.message);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error al eliminar el producto:', error);
+            });
+        }
+
+        // Escuchar eventos de actualización de productos
+        socket.on('updateProduct', (updatedProduct) => {
+            console.log('Producto actualizado:', updatedProduct);
+            // Aquí puedes actualizar la vista con los datos actualizados
+        });
+
+        socket.on('deleteProduct', (productId) => {
+            document.getElementById(`product-${productId}`).remove();
+            console.log('Producto eliminado');
+        });
+    </script>
+</body>
+</html>
