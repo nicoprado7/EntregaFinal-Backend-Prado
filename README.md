@@ -27,7 +27,7 @@ Este proyecto es un sistema de E-Commerce desarrollado con Node.js , Socket.IO, 
 ## Uso
 - Accede a la página principal para ver todos los productos en http://localhost:8080/
 - La página del formulario para crear productos está disponible en http://localhost:8080/realtimeproducts
-- Desde la vista home, podras elimar productos creados, o añadirlos al carrito.
+- Desde la vista home, podras eliminar productos creados, o añadirlos al carrito.
 - Desde el carrito podras eliminarlos o finalizar la compra
 
 ## Instalación
