@@ -29,7 +29,7 @@ Este proyecto es un sistema básico de E-Commerce desarrollado con Node.js y Soc
 - Elimina productos haciendo clic en el botón "Eliminar" en ambas vistas.
 
 ## Instalación
-- Clona el repositorio: git clone https://github.com/nicoprado7/PreEntrega2-BACKEND-Prado.git
+- Clona el repositorio: git clone https://github.com/nicoprado7/EntregaFinal-Backend-Prado.git
 - Instala las dependencias: npm install / npm install express  / npm install handlebars /
 npm install socket.io
 - Inicia el servidor: npm run start
