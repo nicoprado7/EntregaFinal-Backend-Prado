@@ -175,6 +175,6 @@ app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 
 server.listen(PORT, HOST, () => {
-    console.log(`Ejecutándose en http://${HOST}:${PORT}/`);
+    console.log(`Ejecutándose en http://${HOST}:${PORT}/realtimeproducts`);
     connectDB();
 });
