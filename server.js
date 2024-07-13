@@ -117,7 +117,6 @@ app.post('/cart/clear', (req, res) => {
 
 // Nueva ruta para comprar
 app.post('/cart/checkout', (req, res) => {
-    // Aquí podrías agregar lógica adicional para procesar el pago
     cart = [];
     io.emit('updateCart', cart);
     res.status(200).json({ message: 'Compra realizada' });

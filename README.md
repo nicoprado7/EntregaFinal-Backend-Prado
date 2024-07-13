@@ -1,19 +1,19 @@
-<<<<<<< HEAD
 # Entrega final - Curso de Backend
-Este proyecto es un sistema básico de E-Commerce desarrollado con Node.js y Socket.IO, diseñado para gestionar productos en tiempo real mediante una interfaz web.
+Este proyecto es un sistema de E-Commerce desarrollado con Node.js , Socket.IO, MongoDB, Express y Handlebars diseñado para gestionar productos en tiempo real mediante una interfaz web, permitiendo agregarlos a un carrito de compras.
+
 # Autor: Nicolás Prado
 
 ## Características
 -  Gestión de Productos: Permite agregar y eliminar productos dinámicamente.
 - Interfaz en Tiempo Real: Utiliza Socket.IO para actualizar la lista de productos en tiempo real.
-- Persistencia de Datos: Los productos se guardan y recuperan desde un archivo JSON (products.json).
+- Persistencia de Datos: Los productos se guardan y se envian al servidor de MongoDB
 
 ## Tecnologías empleadas
-- Node.js: Entorno de ejecución del servidor.
-- Express: Framework web para Node.js.
-- Socket.IO: Biblioteca para aplicaciones web en tiempo real.
-- Handlebars: Motor de plantillas para renderizar las vistas HTML.
-- File System: Utilizado para la persistencia de datos en archivos JSON.
+- Node.js
+- Express.js
+- Handlebars
+- MongoDB (Mongoose)
+- Socket.IO
 
 ## Estructura del Proyecto
 - server.js: Configuración del servidor Express y Socket.IO.
@@ -21,19 +21,20 @@ Este proyecto es un sistema básico de E-Commerce desarrollado con Node.js y Soc
 - realTimeProducts.handlebars).
 - public/: Archivos estáticos (CSS, imágenes).
 - config/: Configuraciones separadas para Handlebars, rutas y Socket.IO.
+- Routes: Configuraciones para las rutas cart y products.
+- Models: Contiene los modelos del cart y product.
 
 ## Uso
 - Accede a la página principal para ver todos los productos en http://localhost:8080/
-- La página de productos en tiempo real está disponible en http://localhost:8080/realtimeproducts
-- Agrega nuevos productos utilizando el formulario en la página de productos en tiempo real.
-- Elimina productos haciendo clic en el botón "Eliminar" en ambas vistas.
+- La página del formulario para crear productos está disponible en http://localhost:8080/realtimeproducts
+- Desde la vista home, podras elimar productos creados, o añadirlos al carrito.
+- Desde el carrito podras eliminarlos o finalizar la compra
 
 ## Instalación
-- Clona el repositorio: git clone https://github.com/nicoprado7/EntregaFinal-Backend-Prado.git
-- Instala las dependencias: npm install / npm install express  / npm install handlebars /
-npm install socket.io
-- Inicia el servidor: npm run start
- 
+- Clona el repositorio: git clone https://github.com/nicoprado7/PreEntrega2-BACKEND-Prado.git
+- Instala las dependencias: npm install / npm install express  / npm install handlebars / npm install express handlebars / npm install mongoose / npm install mongoose-paginate-v2 / npm install  socket.io
+- Inicia el servidor: npm run dev
+
 =======
-# EntregaFinal-Backend-Prado
->>>>>>> 9f301f1e049f1b7f67a8b4260d50a8ddf1c21718
+
+

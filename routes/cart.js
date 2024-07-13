@@ -1,8 +1,8 @@
 import express from 'express';
-const router = express.Router();
 import Cart from '../models/cart.model.js';
+const router = express.Router();
 
-// GET /api/cart - Get all products in cart
+// GET /api/cart - Obtener todos los productos en el carrito
 router.get('/', async (req, res) => {
     try {
         const cart = await Cart.find().populate('products.productId').exec();
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// POST /api/cart/add/:pid - Add a product to cart
+// POST /api/cart/add/:pid - Añadir un producto al carrito
 router.post('/add/:pid', async (req, res) => {
     const { pid } = req.params;
     const { quantity } = req.body;
@@ -41,7 +41,7 @@ router.post('/add/:pid', async (req, res) => {
     }
 });
 
-// POST /api/cart/delete/:pid - Remove a product from cart
+// POST /api/cart/delete/:pid - Quitar un producto del carrito
 router.post('/delete/:pid', async (req, res) => {
     const { pid } = req.params;
 

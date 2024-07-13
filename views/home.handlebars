@@ -8,8 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-    <h1>E-COMMERCE</h1>
-    <h2>Lista de productos</h2>
+    <h1>Lista de productos</h1>
     <ul id="products-list">
         {{#each products}}
             <li id="product-{{this._id}}">
@@ -30,9 +29,8 @@
                         <button class="increment-button" onclick="incrementarCantidad('{{this._id}}', {{this.stock}})">+</button>
                     </div>
 
-                    <!-- Botón de agregar al carrito -->
+                    <!-- Botón de agregar al carrito y eliminar -->
                     <button class="green-button" onclick="agregarAlCarrito('{{this._id}}', '{{this.title}}', '{{this.price}}')">Agregar al carrito</button>
-
                     <button onclick="eliminarProducto('{{this._id}}')">Eliminar</button>
                 </div>
             </li>
@@ -46,7 +44,7 @@
                 <button class="button-siguiente-atras">◀️ ANTERIOR</button>
             </a>
         {{/if}}
-
+        
         <!-- Botones de Orden -->
         <a href="/api/products?page={{data.page}}&limit={{data.limit}}&sort=asc&query={{data.query}}">
             <button class="button-orden">ORDENAR DE MENOR A MAYOR PRECIO ⬇</button>
@@ -188,13 +186,10 @@
         }
 
         // Escuchar eventos de actualización de productos
-        socket.on('updateProduct', (updatedProduct) => {
-            console.log('Producto actualizado:', updatedProduct);
-
+        socket.on('updateProducts', (product) => {
             const productsList = document.getElementById('products-list');
-
             // Crear el HTML del nuevo producto
-            const newProductHTML = `
+            const newProduct= `
                 <li id="product-${updatedProduct._id}">
                     <div class="product-title">${updatedProduct.title}</div>
                     <img src="${updatedProduct.image}" alt="${updatedProduct.title}" class="product-image">
@@ -214,9 +209,6 @@
                     </div>
                 </li>
             `;
-
-            // Insertar el nuevo producto al inicio de la lista
-            productsList.insertAdjacentHTML('afterbegin', newProductHTML);
         });
 
         socket.on('deleteProduct', (productId) => {

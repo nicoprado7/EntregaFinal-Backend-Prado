@@ -1,9 +1,10 @@
 // routes/products.js
 import express from 'express';
-const router = express.Router();
 import Product from '../models/product.model.js';
 import multer from 'multer';
 import path from 'path';
+
+const router = express.Router();
 
 // Configuración de multer para la subida de imágenes
 const storage = multer.diskStorage({
@@ -16,7 +17,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Render HTML with Handlebars
+// Renderizar HTML con Handlebars
 router.get('/', async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const page = parseInt(req.query.page) || 1;
