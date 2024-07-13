@@ -5,63 +5,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito de Compras</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-    <h1>Carrito de Compras</h1>
-    <ul id="cart-list">
+<h1>Carrito de Compras</h1>
+<table id="cart-table">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Imagen</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody id="cart-body">
         {{#each products}}
-            <li>
-                <strong>{{this.title}}</strong><br>
-                <img src="{{this.image}}" alt="{{this.title}}" width="100"><br>
-                {{this.description}}<br>
-                Precio: ${{this.price}}<br>
-                Cantidad: {{this.quantity}}<br>
-                <button onclick="eliminarDelCarrito('{{this._id}}')">Eliminar</button> <!-- Cambiado a _id -->
-            </li>
+            <tr>
+                <td><strong>{{this.title}}</strong></td>
+                <td><img src="{{this.image}}" alt="{{this.title}}" width="100"></td>
+                <td>{{this.description}}</td>
+                <td>${{this.price}}</td>
+                <td>{{this.quantity}}</td>
+                <td>
+                    <button onclick="eliminarDelCarrito('{{this._id}}')">Eliminar</button>
+                </td>
+            </tr>
         {{/each}}
-    </ul>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io();
+    </tbody>
+</table>
 
-        // Función para eliminar un producto del carrito
-        function eliminarDelCarrito(productId) {
-            fetch(`/cart/delete/${productId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Producto eliminado del carrito');
-                    socket.emit('updateCart'); // Emitir evento para actualizar el carrito
-                } else {
-                    console.error('Error al eliminar el producto del carrito');
-                }
-            })
-            .catch(error => {
-                console.error('Error al eliminar el producto del carrito:', error);
-            });
-        }
+<!-- Botones para acciones globales -->
+<div id="cart-actions">
+    <button class="button-comprar"onclick="comprar()">Comprar</button>
+    <button class="button-vaciar"onclick="vaciarCarrito()">Vaciar Carrito</button>
+</div>
 
-        // Actualizar la lista de productos en tiempo real
-        socket.on('updateCart', (products) => {
-            const cartList = document.getElementById('cart-list');
-            cartList.innerHTML = '';
-            products.forEach(product => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <strong>${product.title}</strong><br>
-                    <img src="${product.image}" alt="${product.title}" width="100"><br>
-                    ${product.description}<br>
-                    Precio: $${product.price}<br>
-                    Cantidad: ${product.quantity}<br>
-                    <button onclick="eliminarDelCarrito('${product._id}')">Eliminar</button>
-                `;
-                cartList.appendChild(li);
-            });
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+
+    // Función para eliminar un producto del carrito
+    function eliminarDelCarrito(productId) {
+        fetch(`/cart/delete/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log('Producto eliminado del carrito');
+                socket.emit('updateCart'); // Emitir evento para actualizar el carrito
+            } else {
+                console.error('Error al eliminar el producto del carrito');
+            }
+        })
+        .catch(error => {
+            console.error('Error al eliminar el producto del carrito:', error);
         });
-    </script>
+    }
+
+    // Función para comprar productos del carrito
+    function comprar() {
+        fetch('/cart/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message);
+            Swal.fire({
+                title: 'Compra Realizada',
+                text: data.message,
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+            socket.emit('updateCart'); // Emitir evento para actualizar el carrito
+        })
+        .catch(error => {
+            console.error('Error al realizar la compra:', error);
+        });
+    }
+
+    // Función para vaciar el carrito
+    function vaciarCarrito() {
+        fetch('/cart/clear', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message);
+            Swal.fire({
+                title: 'Carrito Vaciado',
+                text: data.message,
+                icon: 'info',
+                confirmButtonText: 'OK'
+            });
+            socket.emit('updateCart'); // Emitir evento para actualizar el carrito
+        })
+        .catch(error => {
+            console.error('Error al vaciar el carrito:', error);
+        });
+    }
+
+    // Actualizar la tabla de productos en tiempo real
+    socket.on('updateCart', (products) => {
+        const cartBody = document.getElementById('cart-body');
+        cartBody.innerHTML = '';
+        products.forEach(product => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${product.title}</strong></td>
+                <td><img src="${product.image}" alt="${product.title}" width="100"></td>
+                <td>${product.description}</td>
+                <td>$${product.price}</td>
+                <td>${product.quantity}</td>
+                <td>
+                    <button onclick="eliminarDelCarrito('${product._id}')">Eliminar</button>
+                </td>
+            `;
+            cartBody.appendChild(tr);
+        });
+    });
+</script>
 </body>
 </html>
+

@@ -21,11 +21,22 @@ header{
 .navbar-brand, .navbar-text {
     color: #b40000; /* Color del texto del navbar */
 }
+
 .navbar-nav .nav-item .nav-link {
-    padding: 1px; /* Reduce el padding de los enlaces */
+    background-color: transparent; /* Quita el fondo */
+    padding: 10px; /* Reduce el padding de los enlaces */
     line-height: 0; /* Ajusta la altura de línea si es necesario */
+    width: 100%; /* Ajusta el ancho al 100% */
+    text-align: center; /* Centra el texto dentro de los enlaces */
+    color: #fff; /* Color del texto */
+    font-size: 18px; /* Tamaño de la fuente */
+    text-transform: uppercase; /* Texto en mayúsculas */
+    padding: 10px 20px; /* Espaciado interno */
 }
 
+.navbar-nav .nav-item .nav-link:hover {
+    color: #ffc107; /* Color del texto al pasar el mouse */
+}
 
 h1 {
     margin: 0;
@@ -172,7 +183,7 @@ button[type="submit"]:hover {
 
 
 
-  /* public/css/styles.css (o tu archivo CSS) */
+
 .pagination {
     margin-top: 20px;
 }
@@ -339,3 +350,36 @@ button[type="submit"]:hover {
 .quantity-control .increment-button:hover {
     background-color: lightblue; /* Color de fondo más claro al hacer hover */
 }
+
+
+
+#cart-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#cart-table th, #cart-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#cart-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #f2f2f2;
+}
+
+.button-comprar{
+    background-color: #00ac25;
+}
+.button-comprar:hover{
+    background-color: #006315;
+}
+.button-vaciar{
+    background-color: #292929;
+}
+.button-vaciar:hover{
+    background-color: #707070;
+}
+

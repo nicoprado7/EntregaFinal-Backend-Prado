@@ -1,4 +1,3 @@
-<!-- views/home.handlebars -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Productos</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <h1>E-COMMERCE</h1>
@@ -24,18 +24,11 @@
                     <img src="{{this.imagePath}}" alt="{{this.title}}" class="product-image">
                 {{/if}}
                 <div class="product-buttons">
-                    <!-- Botones de incremento y decremento -->
-   {{!--                  <button class="increment-button" onclick="incrementarCantidad('{{this._id}}')">+</button>
-                    <span id="quantity-{{this._id}}">1</span>
-                    <button class="increment-button" onclick="decrementarCantidad('{{this._id}}')">-</button><br> --}}
-
                     <div class="quantity-control">
                         <button class="decrement-button" onclick="decrementarCantidad('{{this._id}}')">-</button>
                         <span class="space" id="quantity-{{this._id}}">1</span>
-                        <button class="increment-button" onclick="incrementarCantidad('{{this._id}}')">+</button>
+                        <button class="increment-button" onclick="incrementarCantidad('{{this._id}}', {{this.stock}})">+</button>
                     </div>
-
-
 
                     <!-- Botón de agregar al carrito -->
                     <button class="green-button" onclick="agregarAlCarrito('{{this._id}}', '{{this.title}}', '{{this.price}}')">Agregar al carrito</button>
@@ -53,7 +46,6 @@
                 <button class="button-siguiente-atras">◀️ ANTERIOR</button>
             </a>
         {{/if}}
-
 
         <!-- Botones de Orden -->
         <a href="/api/products?page={{data.page}}&limit={{data.limit}}&sort=asc&query={{data.query}}">
@@ -88,18 +80,19 @@
         const socket = io();
 
         // Función para incrementar la cantidad
-        function incrementarCantidad(productId) {
+        function incrementarCantidad(productId, stock) {
             const quantityElement = document.getElementById(`quantity-${productId}`);
-            const stockElement = document.getElementById(`stock-${productId}`);
-            const stock = parseInt(stockElement.textContent);
-
-            let currentQuantity = parseInt(quantityElement.textContent);
+            const currentQuantity = parseInt(quantityElement.textContent);
 
             if (currentQuantity < stock) {
-                currentQuantity++;
-                quantityElement.textContent = currentQuantity;
+                quantityElement.textContent = currentQuantity + 1;
             } else {
-                alert('No puedes agregar más de lo disponible en stock');
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No puedes agregar más de lo disponible en stock',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             }
         }
 
@@ -129,16 +122,33 @@
             .then(response => {
                 if (response.ok) {
                     console.log('Producto agregado al carrito');
+                    Swal.fire({
+                        title: 'Producto Agregado',
+                        text: `Has agregado ${title} al carrito.`,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
                     socket.emit('updateCart');
                     quantityElement.textContent = '1'; // Reiniciar la cantidad a 1 después de agregar al carrito
                 } else {
                     response.json().then(data => {
-                        alert(data.message);
+                        Swal.fire({
+                            title: 'Error',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
                     });
                 }
             })
             .catch(error => {
                 console.error('Error al agregar el producto al carrito:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al agregar el producto al carrito.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             });
         }
 
@@ -157,19 +167,56 @@
                     console.log('Producto eliminado');
                 } else {
                     response.json().then(data => {
-                        alert(data.message);
+                        Swal.fire({
+                            title: 'Error',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
                     });
                 }
             })
             .catch(error => {
                 console.error('Error al eliminar el producto:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al eliminar el producto.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             });
         }
 
         // Escuchar eventos de actualización de productos
         socket.on('updateProduct', (updatedProduct) => {
             console.log('Producto actualizado:', updatedProduct);
-            // Aquí puedes actualizar la vista con los datos actualizados
+
+            const productsList = document.getElementById('products-list');
+
+            // Crear el HTML del nuevo producto
+            const newProductHTML = `
+                <li id="product-${updatedProduct._id}">
+                    <div class="product-title">${updatedProduct.title}</div>
+                    <img src="${updatedProduct.image}" alt="${updatedProduct.title}" class="product-image">
+                    <div class="product-description">${updatedProduct.description}</div>
+                    <div class="product-price">Precio: $${updatedProduct.price}</div>
+                    <div>Código: ${updatedProduct.code}</div>
+                    <div class="product-stock">Stock: <span id="stock-${updatedProduct._id}">${updatedProduct.stock}</span></div>
+                    <div class="product-category">Categoría: ${updatedProduct.category}</div>
+                    <div class="product-buttons">
+                        <div class="quantity-control">
+                            <button class="decrement-button" onclick="decrementarCantidad('${updatedProduct._id}')">-</button>
+                            <span class="space" id="quantity-${updatedProduct._id}">1</span>
+                            <button class="increment-button" onclick="incrementarCantidad('${updatedProduct._id}', ${updatedProduct.stock})">+</button>
+                        </div>
+                        <button class="green-button" onclick="agregarAlCarrito('${updatedProduct._id}', '${updatedProduct.title}', ${updatedProduct.price})">Agregar al carrito</button>
+                        <button onclick="eliminarProducto('${updatedProduct._id}')">Eliminar</button>
+                    </div>
+                </li>
+            `;
+
+            // Insertar el nuevo producto al inicio de la lista
+            productsList.insertAdjacentHTML('afterbegin', newProductHTML);
         });
 
         socket.on('deleteProduct', (productId) => {

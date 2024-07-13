@@ -108,6 +108,21 @@ app.post('/cart/delete/:id', (req, res) => {
     res.status(200).json({ message: 'Producto eliminado del carrito' });
 });
 
+// Nueva ruta para vaciar el carrito
+app.post('/cart/clear', (req, res) => {
+    cart = [];
+    io.emit('updateCart', cart);
+    res.status(200).json({ message: 'Carrito vaciado' });
+});
+
+// Nueva ruta para comprar
+app.post('/cart/checkout', (req, res) => {
+    // Aquí podrías agregar lógica adicional para procesar el pago
+    cart = [];
+    io.emit('updateCart', cart);
+    res.status(200).json({ message: 'Compra realizada' });
+});
+
 app.get('/', async (req, res) => {
     try {
         const products = await Product.find().exec();
@@ -141,6 +156,16 @@ app.post('/product/add', upload.single('image'), (req, res) => {
         category,
         image
     };
+
+    newProduct.save()
+    .then(savedProduct => {
+        io.emit('updateProducts'); // Emitir evento para actualizar productos
+        res.redirect('/');
+    })
+    .catch(err => {
+        console.error('Error al guardar el producto:', err);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    });
     products.push(newProduct);
     saveProducts(products);
     io.emit('updateProducts', products);
