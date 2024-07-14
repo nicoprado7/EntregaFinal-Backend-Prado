@@ -35,7 +35,7 @@ Este proyecto es un sistema de E-Commerce desarrollado con Node.js , Socket.IO, 
 - Instala las dependencias: npm install / npm install express  / npm install handlebars / npm install express handlebars / npm install mongoose / npm install mongoose-paginate-v2 / npm install  socket.io
 - Inicia el servidor: npm run dev
 
-=======
+
 ## VIDEO
 https://github.com/user-attachments/assets/8d9b6a65-7160-40e2-b443-34acc6a9deef
 
