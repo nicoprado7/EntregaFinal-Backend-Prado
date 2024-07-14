@@ -41,8 +41,8 @@ router.post('/add/:pid', async (req, res) => {
     }
 });
 
-// POST /api/cart/delete/:pid - Quitar un producto del carrito
-router.post('/delete/:pid', async (req, res) => {
+// DELETE /api/cart/delete/:pid - Quitar un producto del carrito
+router.delete('/delete/:pid', async (req, res) => {
     const { pid } = req.params;
 
     try {
@@ -58,9 +58,11 @@ router.post('/delete/:pid', async (req, res) => {
 
         res.json({ message: 'Producto eliminado del carrito' });
     } catch (err) {
-        console.error(err);
+        console.error('Error al eliminar el producto del carrito:', err);
         res.status(500).json({ status: 'error', message: 'Error al eliminar el producto del carrito.' });
     }
 });
+
+
 
 export default router;

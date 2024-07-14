@@ -48,28 +48,28 @@
 
     // Función para eliminar un producto del carrito
     function eliminarDelCarrito(productId) {
-        fetch(`/cart/delete/${productId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                console.log('Producto eliminado del carrito');
-                socket.emit('updateCart'); // Emitir evento para actualizar el carrito
-            } else {
-                console.error('Error al eliminar el producto del carrito');
-            }
-        })
-        .catch(error => {
-            console.error('Error al eliminar el producto del carrito:', error);
-        });
-    }
+    fetch(`/cart/delete/${productId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Producto eliminado del carrito');
+            socket.emit('updateCart'); // Emitir evento para actualizar el carrito
+        } else {
+            console.error('Error al eliminar el producto del carrito');
+        }
+    })
+    .catch(error => {
+        console.error('Error al eliminar el producto del carrito:', error);
+    });
+}
 
     // Función para comprar productos del carrito
     function comprar() {
-        fetch('/cart/checkout', {
+        fetch('/cart/clear', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -137,4 +137,3 @@
 </script>
 </body>
 </html>
-

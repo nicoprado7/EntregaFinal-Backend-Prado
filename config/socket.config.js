@@ -1,5 +1,6 @@
 const configureSocket = (io, getProducts, saveProducts) => {
     io.on('connection', (socket) => {
+        console.log('New WebSocket connection');
         // Enviar la lista de productos al cliente
         socket.emit('updateProducts', getProducts());
         // Escuchar el evento para agregar un producto

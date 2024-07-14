@@ -1,3 +1,4 @@
+// server.js
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
@@ -6,9 +7,6 @@ import path from 'path';
 import multer from 'multer';
 import configureHandlebars from './config/handlebars.config.js';
 import paths from './config/path.config.js';
-import configureSocket from './config/socket.config.js';
-import productRoutes from './routes/products.js';
-import cartRoutes from './routes/cart.js';
 import { connectDB } from './config/mongoose.config.js';
 import Product from './models/product.model.js';
 
@@ -56,19 +54,58 @@ const saveProducts = (products) => {
 };
 
 configureHandlebars(app);
-configureSocket(io, getProducts, saveProducts);
 
+// Socket.IO configuration
+io.on('connection', (socket) => {
+    console.log(`Nuevo cliente conectado: ${socket.id}`);
+
+    // Emitir lista de productos al cliente al conectar
+    socket.emit('updateProducts', getProducts());
+
+    socket.on('disconnect', () => {
+        console.log(`Cliente desconectado: ${socket.id}`);
+    });
+
+    // Emitir evento 'updateProducts' cuando se actualice la lista de productos
+    socket.on('addProduct', () => {
+        io.emit('updateProducts', getProducts());
+    });
+
+    socket.on('deleteProduct', () => {
+        io.emit('updateProducts', getProducts());
+    });
+
+    socket.on('addToCart', (productId) => {
+        const product = cart.find(item => item._id === productId);
+        if (product) {
+            product.quantity++;
+        } else {
+            cart.push({ _id: productId, quantity: 1 });
+        }
+        io.emit('updateCart', cart);
+    });
+
+    socket.on('removeFromCart', (productId) => {
+        cart = cart.filter(item => item._id !== productId);
+        io.emit('updateCart', cart);
+    });
+
+    socket.on('clearCart', () => {
+        cart = [];
+        io.emit('updateCart', cart);
+    });
+});
+
+// DELETE /api/products/:id - Eliminar un producto
 app.delete('/api/products/:id', async (req, res) => {
     const productId = req.params.id;
 
     try {
         await Product.findByIdAndDelete(productId).exec();
 
-        let products = getProducts();
-        products = products.filter(product => product.id !== productId);
-        saveProducts(products);
+        // Emitir evento de actualización de productos eliminados
+        io.emit('deleteProduct', productId);
 
-        io.emit('updateProducts', products);
         res.status(200).json({ message: 'Producto eliminado correctamente' });
     } catch (err) {
         console.error('Error al eliminar producto:', err);
@@ -76,6 +113,56 @@ app.delete('/api/products/:id', async (req, res) => {
     }
 });
 
+// POST /api/products - Crear un nuevo producto
+app.post('/api/products', upload.single('image'), async (req, res) => {
+    try {
+        const { title, description, price, code, stock, category } = req.body;
+        const image = req.file ? `/uploads/${req.file.filename}` : '';
+
+        const newProduct = new Product({
+            title,
+            description,
+            price,
+            code,
+            stock,
+            category,
+            image
+        });
+
+        const savedProduct = await newProduct.save();
+
+        io.emit('updateProducts', await Product.find());
+        res.status(201).json(savedProduct);
+    } catch (err) {
+        console.error('Error creating product:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// PUT /api/products/:id - Actualizar un producto
+app.put('/api/products/:id', async (req, res) => {
+    const productId = req.params.id;
+    const { title, description, price, code, stock, category } = req.body;
+
+    try {
+        const updatedProduct = await Product.findByIdAndUpdate(productId, {
+            title,
+            description,
+            price,
+            code,
+            stock,
+            category
+        }, { new: true });
+
+        io.emit('updateProducts', await Product.find());
+        res.json(updatedProduct);
+    } catch (err) {
+        console.error('Error updating product:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// POST /cart/add/:id - Añadir producto al carrito
 app.post('/cart/add/:id', async (req, res) => {
     const productId = req.params.id;
     const { quantity } = req.body;
@@ -101,27 +188,25 @@ app.post('/cart/add/:id', async (req, res) => {
     }
 });
 
-app.post('/cart/delete/:id', (req, res) => {
+// DELETE /cart/delete/:id - Eliminar producto del carrito
+app.delete('/cart/delete/:id', (req, res) => {
     const productId = req.params.id;
     cart = cart.filter(item => item._id.toString() !== productId);
+
+    // Emitir evento de actualización del carrito
     io.emit('updateCart', cart);
+
     res.status(200).json({ message: 'Producto eliminado del carrito' });
 });
 
-// Nueva ruta para vaciar el carrito
+// POST /cart/clear - Vaciar carrito
 app.post('/cart/clear', (req, res) => {
     cart = [];
     io.emit('updateCart', cart);
     res.status(200).json({ message: 'Carrito vaciado' });
 });
 
-// Nueva ruta para comprar
-app.post('/cart/checkout', (req, res) => {
-    cart = [];
-    io.emit('updateCart', cart);
-    res.status(200).json({ message: 'Compra realizada' });
-});
-
+// GET / - Página principal
 app.get('/', async (req, res) => {
     try {
         const products = await Product.find().exec();
@@ -132,15 +217,18 @@ app.get('/', async (req, res) => {
     }
 });
 
+// GET /realtimeproducts - Vista de productos en tiempo real
 app.get('/realtimeproducts', (req, res) => {
     const products = getProducts();
     res.render('realTimeProducts', { products });
 });
 
+// GET /cart - Vista del carrito de compras
 app.get('/cart', (req, res) => {
     res.render('cart', { products: cart });
 });
 
+// POST /product/add - Añadir producto
 app.post('/product/add', upload.single('image'), (req, res) => {
     const { title, description, price, code, stock, category } = req.body;
     const image = `/uploads/${req.file.filename}`;
@@ -156,25 +244,22 @@ app.post('/product/add', upload.single('image'), (req, res) => {
         image
     };
 
-    newProduct.save()
-    .then(savedProduct => {
-        io.emit('updateProducts'); // Emitir evento para actualizar productos
-        res.redirect('/');
-    })
-    .catch(err => {
-        console.error('Error al guardar el producto:', err);
-        res.status(500).json({ error: 'Error interno del servidor' });
-    });
     products.push(newProduct);
     saveProducts(products);
+
     io.emit('updateProducts', products);
     res.redirect('/');
 });
 
+// Rutas API para productos y carrito
+import productRoutes from './routes/products.js';
+import cartRoutes from './routes/cart.js';
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 
 server.listen(PORT, HOST, () => {
-    console.log(`Ejecutándose en http://${HOST}:${PORT}/realtimeproducts`);
+    console.log(`Servidor ejecutándose en http://${HOST}:${PORT}`);
     connectDB();
 });
+
+export { server, io };

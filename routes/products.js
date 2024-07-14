@@ -3,6 +3,7 @@ import express from 'express';
 import Product from '../models/product.model.js';
 import multer from 'multer';
 import path from 'path';
+import { server } from '../server.js'; // Importar el servidor de Socket.IO
 
 const router = express.Router();
 
@@ -97,6 +98,10 @@ router.post('/', upload.single('image'), async (req, res) => {
         });
 
         const savedProduct = await newProduct.save();
+
+        // Emitir evento para actualizar productos
+        server.emit('updateProducts', await Product.find());
+
         res.status(201).json(savedProduct);
     } catch (err) {
         console.error('Error creating product:', err);
@@ -139,6 +144,7 @@ router.delete('/:pid', async (req, res) => {
     try {
         const deletedProduct = await Product.findByIdAndDelete(pid);
         if (deletedProduct) {
+            io.emit('deleteProduct', pid); // Emitir evento para eliminar producto en tiempo real
             res.status(204).send();
         } else {
             res.status(404).json({ message: 'Producto no encontrado' });
@@ -148,5 +154,6 @@ router.delete('/:pid', async (req, res) => {
         res.status(500).json({ status: 'error', message: 'Error al eliminar el producto.' });
     }
 });
+
 
 export default router;
