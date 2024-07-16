@@ -30,6 +30,18 @@ Este proyecto es un sistema de E-Commerce desarrollado con Node.js , Socket.IO, 
 - Desde la vista home, podras eliminar productos creados, o añadirlos al carrito.
 - Desde el carrito podras eliminarlos o finalizar la compra
 
+## Rutas principales
+- GET /: Muestra la lista de productos.
+- GET /realtimeproducts: Muestra la vista para agregar productos en tiempo real.
+- GET /cart: Muestra el carrito de compras.
+- POST /product/add: Agrega un nuevo producto.
+- POST /cart/add/:id: Agrega un producto al carrito.
+- DELETE /cart/delete/:id: Elimina un producto del carrito.
+- POST /cart/clear: Vacía el carrito.
+- POST /cart/checkout: Realiza la compra de los productos en el carrito.
+- DELETE /api/products/:id: Elimina un producto por su ID.
+
+
 ## Instalación
 - Clona el repositorio: git clone https://github.com/nicoprado7/PreEntrega2-BACKEND-Prado.git
 - Instala las dependencias: npm install / npm install express  / npm install handlebars / npm install express handlebars / npm install mongoose / npm install mongoose-paginate-v2 / npm install  socket.io
