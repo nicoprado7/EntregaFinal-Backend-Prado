@@ -29,7 +29,7 @@ const upload = multer({ storage });
 const PORT = 8080;
 const HOST = 'localhost';
 
-app.use(express.static(paths.publicPath));
+app.use(express.static(paths.publicPath));  
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -57,13 +57,13 @@ configureHandlebars(app);
 
 // Socket.IO configuration
 io.on('connection', (socket) => {
-    console.log(`Nuevo cliente conectado: ${socket.id}`);
+
 
     // Emitir lista de productos al cliente al conectar
     socket.emit('updateProducts', getProducts());
 
     socket.on('disconnect', () => {
-        console.log(`Cliente desconectado: ${socket.id}`);
+
     });
 
     // Emitir evento 'updateProducts' cuando se actualice la lista de productos
@@ -258,7 +258,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 
 server.listen(PORT, HOST, () => {
-    console.log(`Servidor ejecutándose en http://${HOST}:${PORT}`);
+    console.log(`Servidor ejecutándose en http://${HOST}:${PORT}/realtimeproducts`);
     connectDB();
 });
 
