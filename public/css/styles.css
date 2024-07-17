@@ -252,7 +252,18 @@ button[type="submit"]:hover {
     margin-top: 20px;
 }
 
+.detail-button {
+    background-color: rgb(119, 119, 119);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Transición suave */
+}
 
+.detail-button:hover{
+    background-color: #000000;
+}
 
 .green-button {
     background-color: green;
@@ -383,3 +394,12 @@ button[type="submit"]:hover {
     background-color: #707070;
 }
 
+/* public/css/styles.css */
+.large-image {
+    width: 100%; /* O el tamaño deseado */
+    max-width: 700px;
+    max-height: 1000px; /* Ajusta el tamaño máximo según lo necesites */
+    height: auto; /* Mantener la proporción de la imagen */
+    display: block;
+    margin: 0 auto; /* Centrar la imagen */
+}

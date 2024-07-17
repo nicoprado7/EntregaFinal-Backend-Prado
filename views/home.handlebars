@@ -26,6 +26,7 @@
                         <button class="increment-button" onclick="incrementarCantidad('{{this._id}}', {{this.stock}})">+</button>
                     </div>
                     <button class="green-button" onclick="agregarAlCarrito('{{this._id}}', '{{this.title}}', '{{this.price}}')">Agregar al carrito</button>
+                     <button class="detail-button" onclick="location.href='/api/products/product/{{this._id}}'">Detalles</button>
                     <button onclick="eliminarProducto('{{this._id}}')">Eliminar</button>
                 </div>
             </li>

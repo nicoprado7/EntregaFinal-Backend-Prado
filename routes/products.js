@@ -155,5 +155,19 @@ router.delete('/:pid', async (req, res) => {
     }
 });
 
+// Ruta para mostrar los detalles del producto
+router.get('/product/:id', async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (product) {
+            res.render('productDetail', { product });
+        } else {
+            res.status(404).send('Producto no encontrado');
+        }
+    } catch (err) {
+        console.error('Error al obtener el producto:', err);
+        res.status(500).send('Error al obtener el producto');
+    }
+});
 
 export default router;
