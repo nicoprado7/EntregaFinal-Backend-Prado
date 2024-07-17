@@ -48,8 +48,11 @@ Este proyecto es un sistema de E-Commerce desarrollado con Node.js , Socket.IO, 
 - Inicia el servidor: npm run dev
 
 
-## VIDEO
-https://github.com/user-attachments/assets/8d9b6a65-7160-40e2-b443-34acc6a9deef
+## VIDEOS
+https://github.com/user-attachments/assets/f87e87f1-f999-4829-83f8-8f52ba8dd549
+
+
+https://github.com/user-attachments/assets/57c1d82e-714c-4123-9a92-9ecb06a5067f
 
 
 
